@@ -11,7 +11,7 @@ import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 
 // Import for react router links
-import { Link } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 
 import avatar from '../assets/react.svg'
 
@@ -48,13 +48,32 @@ function NavBar() {
             iBASEt
           </Typography>
 
-          <Box flexGrow={0} display={'flex'} justifyContent={'center'} alignItems={'center'} >
-            <Link
+          <Box flexGrow={0} gap={2} display={'flex'} justifyContent={'center'} alignItems={'center'} >
+
+            <NavLink
               to="welcome"
-              className="text-white no-underline p-1"
+              style={({ isActive }) => {
+                return {
+                  textDecoration: 'none',
+                  color: 'white',
+                  ...(isActive && { fontSize: '1.2rem' })
+                }
+              }}
             >
               Welcome
-            </Link>
+            </NavLink>
+            <NavLink
+              to="/"
+              style={({ isActive }) => {
+                return {
+                  textDecoration: 'none',
+                  color: 'white',
+                  ...(isActive && { fontSize: '1.2rem' })
+                }
+              }}
+            >
+              Users
+            </NavLink>
           </Box>
           <Box flexGrow={1}>
             <Typography
@@ -104,7 +123,7 @@ function NavBar() {
           </Box>
         </Toolbar>
       </Container>
-    </AppBar>
+    </AppBar >
   );
 }
 export default NavBar;

@@ -234,7 +234,7 @@ const rows = [
     }
 ]
 
-export default function Users() {
+export default function UsersList() {
     return (
         <Box sx={{ width: 1 }}>
             <DataGrid

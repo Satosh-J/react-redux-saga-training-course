@@ -1,13 +1,13 @@
 import './App.css'
 import NavBar from './components/Navbar'
 import Tabs from './components/Tabs'
-import Users from './components/Users'
+import UsersList from './components/UsersList'
 
 function App() {
   return (
     <>
       <NavBar />
-      <Users />
+      <UsersList />
       <Tabs />
     </>
   )
