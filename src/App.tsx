@@ -1,14 +1,12 @@
 import './App.css'
 import NavBar from './components/Navbar'
-import Tabs from './components/Tabs'
-import UsersList from './components/UsersList'
+import { Outlet } from 'react-router-dom';
 
 function App() {
   return (
     <>
       <NavBar />
-      <UsersList />
-      <Tabs />
+      <Outlet />
     </>
   )
 }

@@ -1,41 +1,60 @@
+import { lazy, Suspense } from 'react';
 import {
     createBrowserRouter,
     RouterProvider,
 } from 'react-router-dom';
-import { WelcomePage } from './pages/Welcome';
-import App from './App';
+import { WelcomePage } from './pages/WelcomePage';
 import { UsersPage } from './pages/Users';
+import App from './App';
 import UsersList from './components/UsersList';
 import UserRoles from './components/UserRoles';
 import UserLicenses from './components/UserLicenses';
+import { ErrorPage } from './pages/ErrorPage';
+
+const AdminPage = lazy(() => import('./pages/AdminPage'))
 
 const router = createBrowserRouter([
     {
-        path: 'welcome',
-        element: <WelcomePage />,
-    },
-    {
         path: '/',
         element: <App />,
-    },
-    {
-        path: '/users',
-        element: <UsersPage />,
+        errorElement: <ErrorPage />,
         children: [
             {
-                path: 'list',
-                element: <UsersList />
+                index: true,
+                element: <WelcomePage />,
             },
             {
-                path: 'role',
-                element: <UserRoles />
+                path: 'users',
+                element: <UsersPage />,
+                children: [
+                    {
+                        index: true,
+                        element: <UsersList />
+                    },
+                    {
+                        path: 'role',
+                        element: <UserRoles />
+                    },
+                    {
+                        path: 'license',
+                        element: <UserLicenses />
+                    },
+                ]
             },
             {
-                path: 'license',
-                element: <UserLicenses />
-            },
+                path: 'admin',
+                element: (
+                    <Suspense
+                        fallback={
+                            <p>Loading ...</p>
+                        }
+                    >
+                        <AdminPage />
+                    </Suspense>
+                )
+            }
         ]
-    }
+    },
 ]);
 
 export function Routes() {

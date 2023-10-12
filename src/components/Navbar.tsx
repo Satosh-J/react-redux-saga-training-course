@@ -11,7 +11,7 @@ import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 
 // Import for react router links
-import { NavLink } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 
 import avatar from '../assets/react.svg'
 
@@ -36,8 +36,6 @@ function NavBar() {
           <Typography
             variant="h6"
             noWrap
-            component="a"
-            href="#app-bar-with-responsive-menu"
             sx={{
               mr: 2,
               fontWeight: 700,
@@ -45,25 +43,16 @@ function NavBar() {
               textDecoration: 'none',
             }}
           >
-            iBASEt
+            <Link to=""
+              style={{ textDecoration: 'none', color: 'inherit' }}
+            >
+              iBASEt
+            </Link>
           </Typography>
 
           <Box flexGrow={0} gap={2} display={'flex'} justifyContent={'center'} alignItems={'center'} >
-
             <NavLink
-              to="welcome"
-              style={({ isActive }) => {
-                return {
-                  textDecoration: 'none',
-                  color: 'white',
-                  ...(isActive && { fontSize: '1.2rem' })
-                }
-              }}
-            >
-              Welcome
-            </NavLink>
-            <NavLink
-              to="/"
+              to="/users"
               style={({ isActive }) => {
                 return {
                   textDecoration: 'none',
@@ -73,23 +62,21 @@ function NavBar() {
               }}
             >
               Users
+            </NavLink>
+            <NavLink
+              to="/admin"
+              style={({ isActive }) => {
+                return {
+                  textDecoration: 'none',
+                  color: 'white',
+                  ...(isActive && { fontSize: '1.2rem' })
+                }
+              }}
+            >
+              Admin
             </NavLink>
           </Box>
           <Box flexGrow={1}>
-            <Typography
-              variant="h5"
-              noWrap
-              textTransform={'uppercase'}
-              component="a"
-              href="#app-bar-with-responsive-menu"
-              sx={{
-                mr: 2,
-                color: 'inherit',
-                textDecoration: 'none',
-              }}
-            >
-              Users
-            </Typography>
           </Box>
 
           <Box sx={{ flexGrow: 0 }}>
