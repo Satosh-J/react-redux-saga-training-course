@@ -1,6 +1,7 @@
 import * as React from 'react';
 import AppBar from '@mui/material/AppBar';
-import Box from '@mui/material/Box';
+import { Box } from '@mui/material';
+import { LoadingButton } from '@mui/lab';
 import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
@@ -15,10 +16,22 @@ import { Link, NavLink } from 'react-router-dom';
 
 import avatar from '../assets/react.svg'
 
+import { User } from '../api/authenticate';
+
+type Props = {
+  user?: User;
+  onSignInClick: () => void;
+  loading: boolean;
+};
+
 
 const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 
-function NavBar() {
+function NavBar({
+  user,
+  onSignInClick,
+  loading,
+}: Props) {
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
 
   const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
@@ -51,63 +64,79 @@ function NavBar() {
           </Typography>
 
           <Box flexGrow={0} gap={2} display={'flex'} justifyContent={'center'} alignItems={'center'} >
-            <NavLink
-              to="/users"
-              style={({ isActive }) => {
-                return {
-                  textDecoration: 'none',
-                  color: 'white',
-                  ...(isActive && { fontSize: '1.2rem' })
-                }
-              }}
-            >
-              Users
-            </NavLink>
-            <NavLink
-              to="/admin"
-              style={({ isActive }) => {
-                return {
-                  textDecoration: 'none',
-                  color: 'white',
-                  ...(isActive && { fontSize: '1.2rem' })
-                }
-              }}
-            >
-              Admin
-            </NavLink>
+            {user &&
+              <>
+                <NavLink
+                  to="/users"
+                  style={({ isActive }) => {
+                    return {
+                      textDecoration: 'none',
+                      color: 'white',
+                      ...(isActive && { fontSize: '1.2rem' })
+                    }
+                  }}
+                >
+                  Users
+                </NavLink>
+                <NavLink
+                  to="/admin"
+                  style={({ isActive }) => {
+                    return {
+                      textDecoration: 'none',
+                      color: 'white',
+                      ...(isActive && { fontSize: '1.2rem' })
+                    }
+                  }}
+                >
+                  Admin
+                </NavLink>
+              </>
+            }
           </Box>
           <Box flexGrow={1}>
           </Box>
-
-          <Box sx={{ flexGrow: 0 }}>
-            <Tooltip title="Open settings">
-              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="Remy Sharp" src={avatar} />
-              </IconButton>
-            </Tooltip>
-            <Menu
-              sx={{ mt: '45px' }}
-              id="menu-appbar"
-              anchorEl={anchorElUser}
-              anchorOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-              open={Boolean(anchorElUser)}
-              onClose={handleCloseUserMenu}
-            >
-              {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                  <Typography textAlign="center">{setting}</Typography>
-                </MenuItem>
-              ))}
-            </Menu>
-          </Box>
+          {
+            user ?
+              <Box sx={{ flexGrow: 0 }}>
+                {/* <Tooltip title="Open settings"> */}
+                {user.name} signed in.
+                {/* </Tooltip> */}
+                <Menu
+                  sx={{ mt: '45px' }}
+                  id="menu-appbar"
+                  anchorEl={anchorElUser}
+                  anchorOrigin={{
+                    vertical: 'top',
+                    horizontal: 'right',
+                  }}
+                  keepMounted
+                  transformOrigin={{
+                    vertical: 'top',
+                    horizontal: 'right',
+                  }}
+                  open={Boolean(anchorElUser)}
+                  onClose={handleCloseUserMenu}
+                >
+                  {settings.map((setting) => (
+                    <MenuItem key={setting} onClick={handleCloseUserMenu}>
+                      <Typography textAlign="center">{setting}</Typography>
+                    </MenuItem>
+                  ))}
+                </Menu>
+              </Box> : <LoadingButton
+                onClick={onSignInClick}
+                loading={loading}
+                sx={{
+                  bgcolor: 'white',
+                  ':hover': {
+                    bgcolor: 'primary.main', // theme.palette.primary.main
+                    color: 'white',
+                  },
+                }}
+              >
+                Sign In
+              </LoadingButton>
+          }
         </Toolbar>
       </Container>
     </AppBar >
