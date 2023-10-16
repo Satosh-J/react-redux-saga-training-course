@@ -14,25 +14,34 @@ import MenuItem from '@mui/material/MenuItem';
 // Import for react router links
 import { Link, NavLink } from 'react-router-dom';
 
-import avatar from '../assets/react.svg'
-
-import { User } from '../api/authenticate';
-
-type Props = {
-  user?: User;
-  onSignInClick: () => void;
-  loading: boolean;
-};
-
+import { authenticate } from '../api/authenticate';
+import { authorize } from '../api/authorize';
+import { useAuthContext } from '../AuthContext';
 
 const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 
-function NavBar({
-  user,
-  onSignInClick,
-  loading,
-}: Props) {
+function NavBar() {
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
+
+  const { user, loading, dispatch } = useAuthContext();
+  async function handleSignInClick() {
+    dispatch({ type: "authenticate" });
+    const authenticatedUser = await authenticate();
+    dispatch({
+      type: "authenticated",
+      user: authenticatedUser,
+    });
+    if (authenticatedUser !== undefined) {
+      dispatch({ type: "authorize" });
+      const authorizedPermissions = await authorize(
+        authenticatedUser.id
+      );
+      dispatch({
+        type: "authorized",
+        permissions: authorizedPermissions,
+      });
+    }
+  }
 
   const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElUser(event.currentTarget);
@@ -124,7 +133,7 @@ function NavBar({
                   ))}
                 </Menu>
               </Box> : <LoadingButton
-                onClick={onSignInClick}
+                onClick={handleSignInClick}
                 loading={loading}
                 sx={{
                   bgcolor: 'white',

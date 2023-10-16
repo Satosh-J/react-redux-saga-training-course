@@ -1,7 +1,9 @@
-type Props = {
-    permissions: undefined | string[];
-};
-export function Content({ permissions }: Props) {
+
+import { useAuthContext } from '../AuthContext';
+
+export function Content() {
+    const { permissions } = useAuthContext();
+    
     if (permissions === undefined) {
         return null;
     }

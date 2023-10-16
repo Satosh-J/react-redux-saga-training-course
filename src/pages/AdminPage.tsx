@@ -1,3 +1,4 @@
+import { useAuthContext } from '../AuthContext';
 import { User } from '../api/authenticate';
 
 type Props = {
@@ -5,7 +6,9 @@ type Props = {
     permissions?: string[];
 };
 
-export default function AdminPage({ user, permissions }: Props) {
+export default function AdminPage() {
+    const { user } = useAuthContext();
+    
     return (
         <>
             {
