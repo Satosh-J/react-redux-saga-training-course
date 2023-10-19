@@ -1,4 +1,5 @@
-import { useAuthContext } from '../AuthContext';
+import { useSelector } from 'react-redux';
+import { RootState } from '../store/store';
 import { User } from '../api/authenticate';
 
 type Props = {
@@ -7,7 +8,9 @@ type Props = {
 };
 
 export default function AdminPage() {
-    const { user } = useAuthContext();
+    const user = useSelector(
+        (state: RootState) => state.user.user
+      );
     
     return (
         <>

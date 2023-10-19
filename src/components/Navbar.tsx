@@ -3,43 +3,51 @@ import AppBar from '@mui/material/AppBar';
 import { Box } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 import Toolbar from '@mui/material/Toolbar';
-import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import Menu from '@mui/material/Menu';
 import Container from '@mui/material/Container';
-import Avatar from '@mui/material/Avatar';
-import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 
 // Import for react router links
 import { Link, NavLink } from 'react-router-dom';
 
+// Import for redux
+import { useSelector, useDispatch } from 'react-redux';
+import type { RootState } from '../store/store';
+import {
+  authenticateAction,
+  authenticatedAction,
+  authorizeAction,
+  authorizedAction,
+} from '../store/userSlice';
 import { authenticate } from '../api/authenticate';
 import { authorize } from '../api/authorize';
-import { useAuthContext } from '../AuthContext';
+
 
 const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 
 function NavBar() {
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
 
-  const { user, loading, dispatch } = useAuthContext();
+  // const { user, loading, dispatch } = useAuthContext();
+
+
+  const { user, loading } = useSelector(
+    (state: RootState) => state.user
+  );
+
+  const dispatch = useDispatch();
+
   async function handleSignInClick() {
-    dispatch({ type: "authenticate" });
+    dispatch(authenticateAction());
     const authenticatedUser = await authenticate();
-    dispatch({
-      type: "authenticated",
-      user: authenticatedUser,
-    });
+    dispatch(authenticatedAction(authenticatedUser));
     if (authenticatedUser !== undefined) {
-      dispatch({ type: "authorize" });
+      dispatch(authorizeAction());
       const authorizedPermissions = await authorize(
         authenticatedUser.id
       );
-      dispatch({
-        type: "authorized",
-        permissions: authorizedPermissions,
-      });
+      dispatch(authorizedAction(authorizedPermissions));
     }
   }
 

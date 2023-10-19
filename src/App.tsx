@@ -1,20 +1,21 @@
-import './App.css'
-import NavBar from './components/Navbar'
 import { Outlet } from 'react-router-dom';
-import { Content } from './components/Content';
-import { AuthProvider } from './AuthContext';
+// Comment this line as we are going to integrate Redux
+// import { AuthProvider } from './AuthContext';
+import { Provider } from 'react-redux';
+import { store } from './store/store';
 
+import NavBar from './components/Navbar'
+import { Content } from './components/Content';
+import './App.css'
 
 function App() {
 
   return (
-    <AuthProvider>
-      <>
-        <NavBar />
-        <Outlet />
-        <Content />
-      </>
-    </AuthProvider>
+    <Provider store={store}>
+      <NavBar />
+      <Outlet />
+      <Content />
+    </Provider>
   )
 }
 
