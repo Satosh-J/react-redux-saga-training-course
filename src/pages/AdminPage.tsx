@@ -1,11 +1,5 @@
 import { useSelector } from 'react-redux';
 import { RootState } from '../store/store';
-import { User } from '../api/authenticate';
-
-type Props = {
-    user?: User;
-    permissions?: string[];
-};
 
 export default function AdminPage() {
     const user = useSelector(
