@@ -4,12 +4,12 @@ import {
     RouterProvider,
 } from 'react-router-dom';
 import { WelcomePage } from './pages/WelcomePage';
-import { UsersPage } from './pages/Users';
 import App from './App';
 import UsersList from './components/UsersList';
 import UserRoles from './components/UserRoles';
 import UserLicenses from './components/UserLicenses';
 import { ErrorPage } from './pages/ErrorPage';
+import { UsersPage } from './users/UsersPage';
 
 const AdminPage = lazy(() => import('./pages/AdminPage'))
 
