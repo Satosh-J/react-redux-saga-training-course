@@ -15,14 +15,15 @@ export function UsersList({ users }: Props) {
     const handleDelete = (userId: number) => {
         deleteUser(userId)
     }
-    
+
     return (
         <>
             <ul className="list-none">
                 {users.map((user) => (
-                    <UserInfo user={user} 
-                    onUpdate={handleUpdate}
-                    onDelete={handleDelete}
+                    <UserInfo user={user}
+                        key={user.id}
+                        onUpdate={handleUpdate}
+                        onDelete={handleDelete}
                     />
                 ))}
             </ul>

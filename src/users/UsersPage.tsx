@@ -3,21 +3,20 @@ import { NewUserData, UserData } from './types';
 import { UsersList } from './UsersList';
 import { NewUser } from './NewUser';
 import { saveUser } from './saveUser';
-import { getUsers } from './api';
+import { fetchUsers } from './api';
+import { useDispatch, useSelector } from 'react-redux';
+
 
 export function UsersPage() {
-    const [isLoading, setIsLoading] = useState(true);
-    const [users, setUsers] = useState<UserData[]>([]);
+    const { users, loading } = useSelector((state: any) => state.user)
+
+    const dispatch = useDispatch()
 
     useEffect(() => {
         let cancel = false;
 
-        getUsers().then((data) => {
-            if (!cancel) {
-                setUsers(data);
-                setIsLoading(false);
-            }
-        });
+        dispatch(fetchUsers())
+
         return () => {
             cancel = true;
         };
@@ -25,27 +24,15 @@ export function UsersPage() {
 
     const handleSave = async (user: NewUserData) => {
         const newUser = await saveUser(user)
-        console.log({
-            user, newUser
-        })
-        setUsers([newUser, ...users])
+        // setUsers([newUser, ...users])
     }
-
-    if (isLoading) {
-        return (
-            <div>
-                Loading ...
-            </div>
-        );
-    }
-
 
 
     return (
         <div>
             <h2 >Users</h2>
             {
-                isLoading ? <p>loading...</p> :
+                loading ? <p>loading...</p> :
                     <NewUser onSave={handleSave} />
             }
             <UsersList users={users} />

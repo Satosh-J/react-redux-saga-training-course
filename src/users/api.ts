@@ -1,3 +1,4 @@
+import { FETCH_USERS } from '../store/actions';
 import { NewUserData, UserData } from './types';
 
 export async function getUsers() {
@@ -36,3 +37,17 @@ export async function deleteUser(id: number) {
 
     return 'User deleted successfully';
 }
+
+
+
+
+export const fetchUsers = () => {
+    const fetchWorkCenterUri = `http://localhost:3001/users`;
+
+    const payload = {
+        action: FETCH_USERS,
+        method: 'GET',
+        url: fetchWorkCenterUri,
+    };
+    return { type: 'API_INVOCATION', payload };
+};
