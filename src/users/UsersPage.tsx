@@ -1,9 +1,8 @@
-import { useEffect, useState } from 'react';
-import { NewUserData, UserData } from './types';
+import { useEffect } from 'react';
+import { NewUserData } from './types';
 import { UsersList } from './UsersList';
 import { NewUser } from './NewUser';
-import { saveUser } from './saveUser';
-import { fetchUsers } from './api';
+import { fetchUsers, saveUser } from './api';
 import { useDispatch, useSelector } from 'react-redux';
 
 
@@ -23,7 +22,8 @@ export function UsersPage() {
     }, []);
 
     const handleSave = async (user: NewUserData) => {
-        const newUser = await saveUser(user)
+
+        dispatch(saveUser(user))
         // setUsers([newUser, ...users])
     }
 

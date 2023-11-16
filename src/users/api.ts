@@ -1,4 +1,4 @@
-import { FETCH_USERS } from '../store/actions';
+import { DELETE_USER, FETCH_USERS, SAVE_USER, UPDATE_USER } from '../store/actions';
 import { NewUserData, UserData } from './types';
 
 export async function getUsers() {
@@ -8,37 +8,6 @@ export async function getUsers() {
     const body: UserData[] = await response.json()
     return body;
 }
-
-export async function updateUser(id: number, user: NewUserData) {
-    const response = await fetch(`http://localhost:3001/users/${id}`, {
-        method: 'PUT',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(user),
-    });
-
-    if (!response.ok) {
-        throw new Error(`Failed to update user: ${response.statusText}`);
-    }
-
-    const updatedUser: UserData = await response.json();
-    return updatedUser;
-}
-
-export async function deleteUser(id: number) {
-    const response = await fetch(`http://localhost:3001/users/${id}`, {
-        method: 'DELETE',
-    });
-
-    if (!response.ok) {
-        throw new Error(`Failed to delete user: ${response.statusText}`);
-    }
-
-    return 'User deleted successfully';
-}
-
-
 
 
 export const fetchUsers = () => {
@@ -51,3 +20,46 @@ export const fetchUsers = () => {
     };
     return { type: 'API_INVOCATION', payload };
 };
+
+
+export const updateUser = (id: number, user: NewUserData) => {
+    const url = `http://localhost:3001/users/${id}`
+
+    const payload = {
+        action: UPDATE_USER,
+        method: 'PUT',
+        url,
+        data: user
+    };
+    return { type: 'API_INVOCATION', payload };
+};
+
+
+export const deleteUser = (id: number) => {
+    const url = `http://localhost:3001/users/${id}`
+
+    const payload = {
+        action: DELETE_USER,
+        method: 'DELETE',
+        url,
+        data: id
+    };
+    return { type: 'API_INVOCATION', payload };
+};
+
+
+export const saveUser = (
+    newUserData: NewUserData
+) => {
+
+    const url = `http://localhost:3001/users`
+
+    const payload = {
+        action: SAVE_USER,
+        method: 'POST',
+        url,
+        data: newUserData
+    };
+    return { type: 'API_INVOCATION', payload };
+
+}

@@ -1,17 +1,20 @@
 
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse, CancelTokenSource, } from 'axios';
-import { actionChannel, take, fork, call, put, delay } from 'redux-saga/effects';
+import { actionChannel, take, fork, call, put } from 'redux-saga/effects';
 
+// Constants for action types
 const API_INVOCATION = 'API_INVOCATION';
 const ALREADY_EXISTS = 'ALREADY_EXISTS';
 
-const apiType = {
-    GET: 'GET',
-    POST: 'POST',
-    PUT: 'PUT',
-    DELETE: 'DELETE',
+// Enum object for API request types
+enum apiType {
+    GET = 'GET',
+    POST = 'POST',
+    PUT = 'PUT',
+    DELETE = 'DELETE',
 };
 
+// Interface defining the default Axios request configuration
 interface CreateAxiosDefaults extends AxiosRequestConfig {
     headers: {
         Accept: string;
@@ -21,8 +24,8 @@ interface CreateAxiosDefaults extends AxiosRequestConfig {
     };
 }
 
+// Default configuration for Axios
 const configuration: CreateAxiosDefaults = {
-    baseURL: '/api',
     headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
@@ -42,12 +45,15 @@ const configuration: CreateAxiosDefaults = {
     timeout: 5000,
 };
 
+// Create an Axios instance with the specified configuration
 const api: AxiosInstance = axios.create(configuration);
 
+// Interface defining the structure of an error object
 interface Error {
     cause: string;
 }
 
+// Interface defining the structure of an action object
 interface Action {
     payload: {
         action: string;
@@ -58,30 +64,37 @@ interface Action {
 }
 
 
+// Record to store pending requests
 const pendingRequests: Record<string, any> = {
 };
 
+// Function to check if a similar pending request exists
 const similarPendingRequestExist = (actionType: string, url: string): boolean =>
     !!pendingRequests[actionType]?.config.url && pendingRequests[actionType]?.config.url === url;
 
 
+// Generator function to dispatch a pending action
 function* dispatchPending(actionType: string, action: Action, payload: any): any {
     yield put({ type: `${actionType}_PENDING`, actualAction: action, payload });
 }
 
+// Generator function to dispatch a fulfilled action
 function* dispatchFulfilled(action: Action, response: any): any {
     yield put({ type: `${action.payload.action}_FULFILLED`, actualAction: action, payload: { data: response.data } });
 }
 
+// Generator function to dispatch a rejected action
 function* dispatchRejected(actionType: string, action: Action, error: Error): any {
     yield put({ type: `${actionType}_REJECTED`, actualAction: action, payload: { response: error } });
 }
 
+// Generator function to handle API invocation
 function* invokeAPI(action: Action): any {
     const { payload } = action;
     const { method, url, data, action: actionType } = payload;
 
     try {
+        // Dispatch a pending action
         yield* dispatchPending(payload.action, action, payload);
 
         let response: AxiosResponse;
@@ -96,58 +109,67 @@ function* invokeAPI(action: Action): any {
                     );
                 } else {
 
+                    // Create a CancelToken source for cancelling the request
                     const source: CancelTokenSource = axios.CancelToken.source();
+                    // Store the pending request information
                     pendingRequests[actionType] = { config: { url, api, source } };
 
+                    // Make a GET request using Axios
                     response = yield call([api, api.get], url, { cancelToken: source.token });
                 }
                 break;
             }
 
             case apiType.POST:
+                // Make a POST request using Axios
                 response = yield call([api, api.post], url, data,);
                 break;
 
             case apiType.DELETE:
 
-                // response = yield call(axios.delete, url, data, {...apiConfig} );
-                response = yield call([api, api.delete], url,);
+                // Make a DELETE request using Axios
+                response = yield call([api, api.delete], url);
                 break;
             case apiType.PUT:
+                // Make a PUT request using Axios
                 response = yield call([api, api.put], url, data,);
                 break;
-
 
             default:
                 throw new Error(`API method ${method} is not supported!`);
         }
 
+        // Dispatch a fulfilled action
         yield* dispatchFulfilled(action, response);
+        // Remove the pending request information
         delete pendingRequests[actionType];
-        // if (apiConfig && apiConfig.resolve) {
-        //     apiConfig.resolve(response.data);
-        // }
     } catch (error: any) {
+        // If the error is not due to a similar request existing, remove the pending request information
         if (error.cause !== ALREADY_EXISTS) {
             delete pendingRequests[actionType];
         }
+
+        // Dispatch a rejected action
         yield* dispatchRejected(payload.action, action, error);
-        // if (apiConfig && apiConfig.reject) {
-        //     apiConfig.reject(error);
-        // }
     }
 }
 
 
+// Generator function to watch for API invocation actions
 function* apiSaga(): any {
+    // Create an action channel for API_INVOCATION actions
     const actionQueue = yield actionChannel(API_INVOCATION);
     const keepWatching = true;
 
+    // Continue watching for actions in the action channel
     while (keepWatching) {
+        // Take the next API_INVOCATION action
         const action: Action = yield take(actionQueue);
+        // Fork a new process to handle the API invocation
         yield fork(invokeAPI, action);
     }
 }
 
+// Export the invokeAPI function and the apiSaga generator function
 export { invokeAPI };
 export default apiSaga;

@@ -5,9 +5,10 @@ type Props = {
     onUpdate: (userId: number, newUser: NewUserData) => void;
     onDelete: (userId: number) => void;
     user: UserData
+    loading: boolean
 };
 
-export function UserInfo({ user, onUpdate, onDelete }: Props) {
+export function UserInfo({ user, onUpdate, onDelete, loading }: Props) {
 
     const [firstName, setFirstName] = useState(user.first_name)
     const [lastName, setLastName] = useState(user.last_name)
@@ -36,6 +37,8 @@ export function UserInfo({ user, onUpdate, onDelete }: Props) {
                 state
             }
         )
+
+        if (!loading) setIsEdit(false)
     }
 
 
@@ -110,6 +113,7 @@ export function UserInfo({ user, onUpdate, onDelete }: Props) {
                         <button onClick={() => handleUpdateClick(user.id, user)}>Update</button>
                         <button onClick={() => setIsEdit(false)}>Cancel</button>
                     </> :
+                    
                     <li key={user.id} >
                         <h3 >
                             {user.first_name}&nbsp;
